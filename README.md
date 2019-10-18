@@ -6,9 +6,13 @@ this is kak rizmi project with hmm for speech recognition
 
 ## install package
 <code> pip install python_speech_features </code>
+
 <code> pip install scipy.io </code>
+
 <code> pip install hmmlearn </code>
+
 <code> pip install scikit-learn </code>
+
 <code> pip install numpy </code>
 
 ## running in your terminal
