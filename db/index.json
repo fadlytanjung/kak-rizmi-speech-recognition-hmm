@@ -1,0 +1,116 @@
+{
+    "labels":[
+        {
+            "id":1,
+            "label":"D1_1",
+            "description":"(min marqadina) - 36.52",
+            "type":"Idgham Bighunnah",
+            "char":"م - Mim"
+        },
+        {
+            "id": 2,
+            "label": "D1_2",
+            "description": "(radhiyatan mardhiyyah) - 89.28",
+            "type": "Idgham Bighunnah",
+            "char": "م - Mim"
+        },
+        {
+            "id": 3,
+            "label": "D1_3",
+            "description": "(ajalin musamma) - 71.4",
+            "type": "Idgham Bighunnah",
+            "char": "م - Mim"
+        },
+        {
+            "id": 4,
+            "label": "D1_4",
+            "description": "(kitabun marqum) - 83.9",
+            "type": "Idgham Bighunnah",
+            "char": "م - Mim"
+        },
+        {
+            "id": 5,
+            "label": "D2_1",
+            "description": "(waman ya`mal) - 4.110",
+            "type": "Idgham Bighunnah",
+            "char": "ي - Ya"
+        },
+        {
+            "id": 6,
+            "label": "D2_2",
+            "description": "(syarray yarah) - 99.8",
+            "type": "Idgham Bighunnah",
+            "char": "ي - Ya"
+        },
+        {
+            "id": 7,
+            "label": "D2_3",
+            "description": "(yaumaidzin yatadzakkar) - 89.23",
+            "type": "Idgham Bighunnah",
+            "char": "ي - Ya"
+        },
+        {
+            "id": 8,
+            "label": "D2_4",
+            "description": "(wujuhun yaumaidzin) - 80.38",
+            "type": "Idgham Bighunnah",
+            "char": "ي - Ya"
+        },
+        {
+            "id": 9,
+            "label": "D3_1",
+            "description": "(min ni`mah) - 16.53",
+            "type": "Idgham Bighunnah",
+            "char": "ن - Nun"
+        },
+        {
+            "id": 10,
+            "label": "D3_2",
+            "description": "(`adzaban nukra) - 65.8",
+            "type": "Idgham Bighunnah",
+            "char": "ن - Nun"
+        },
+        {
+            "id": 11,
+            "label": "D3_3",
+            "description": "(yaumaidzin na`imah) - 88.8",
+            "type": "Idgham Bighunnah",
+            "char": "ن - Nun"
+        },
+        {
+            "id": 12,
+            "label": "D3_4",
+            "description": "(`amilatun nashibah) - 88.3",
+            "type": "Idgham Bighunnah",
+            "char": "ن - Nun"
+        },
+        {
+            "id": 13,
+            "label": "D4_1",
+            "description": "(min wal) - 13.11",
+            "type": "Idgham Bighunnah",
+            "char": "و - Wa"
+        },
+        {
+            "id": 14,
+            "label": "D4_2",
+            "description": "(ma lan wa`addadah) - 104.2",
+            "type": "Idgham Bighunnah",
+            "char": "و - Wa"
+        },
+        {
+            "id": 15,
+            "label": "D4_3",
+            "description": "(lahabin watabb) -111.1",
+            "type": "Idgham Bighunnah",
+            "char": "و - Wa"
+        },
+        {
+            "id": 16,
+            "label": "D4_4",
+            "description": "(sinatun wala) 2.255",
+            "type": "Idgham Bighunnah",
+            "char": "و - Wa"
+        }
+    ]
+}

@@ -52,6 +52,7 @@ class Model():
 				if labeldict[x] == self.CATEGORY[k]:
 					mfcc_feat = compute_mfcc(wavdict[x])
 					model.fit(mfcc_feat)
+					print(model.score(mfcc_feat))
 
 	
 	def test(self, wavdict=None, labeldict=None):
@@ -62,15 +63,15 @@ class Model():
 			model = self.models[k]
 			for x in wavdict:
 				mfcc_feat = compute_mfcc(wavdict[x])
-				
 				re = model.score(mfcc_feat)
+				print(re)
 				subre.append(re)
 				label.append(labeldict[x])
 			
 			result.append(subre)
 		
 		result = np.vstack(result).argmax(axis=0)
-	
+		print(result)
 		result = [self.CATEGORY[label] for label in result]
 		print('hasil：\n',result)
 		print('label：\n',label)
@@ -92,12 +93,18 @@ class Model():
 		
 		self.models = joblib.load(path)
 
-CATEGORY = ['Q3', 'D3', 'Q4', 'D4', 'Q1', 'D1', 'Q2', 'D2']
-wavdict, labeldict = gen_wavlist('train_data')
-testdict, testlabel = gen_wavlist('test_data')	
+# CATEGORY = ['Q3', 'D3', 'Q4', 'D4', 'Q1', 'D1', 'Q2', 'D2']
+CATEGORY = ['1']
+# wavdict, labeldict = gen_wavlist('train_data')
+wavdict, labeldict = gen_wavlist('train_data_small')
+print(labeldict)
+exit()
+# testdict, testlabel = gen_wavlist('test_data')
+testdict, testlabel = gen_wavlist('test_data_small')
+
 models = Model(CATEGORY=CATEGORY)
 models.train(wavdict=wavdict, labeldict=labeldict)
 models.save()
 models.load()
-models.test(wavdict=wavdict, labeldict=labeldict)
+# models.test(wavdict=wavdict, labeldict=labeldict)
 models.test(wavdict=testdict, labeldict=testlabel)
