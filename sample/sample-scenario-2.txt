@@ -1,0 +1,46 @@
+
+Label A 10 data (A1.wav,A2.wav,...A10.wav) ==> model A.pkl //[2200000 241415 ]
+label B 10 data (B1.wav,B2.wav,...B10.wav )==> model B.pkl //[2200000 241415 ]
+
+data test.wav ==> modelA.score(mfcc_test) == -90000 A ?
+data test.wav ==> modelB.score(mfcc_test) == -70000
+
+10 label A modelA.score(1.wav)
+modelA.score(A1.wav) = -50000
+modelA.score(A2.wav) = -78000
+
+A B C D E
+[-50000,-78000,...-900000] === modelA.score(test.wav) -90000 
+
+1. -500000 A
+2. -780000 A
+....
+10. -900000 A
+11. 870000 Non
+12-75233 Non
+...
+20. 18000 Non 
+
+50 
+
+KNN, SVM => 70% modelA.h5
+
+100 20 test 80 training ==> 63 C ==> 70% model.h5 
+75 A
+80.5 C
+60 B
+55 A
+68 A
+73 B 74 C
+...
+...
+
+KNN
+
+age height label
+
+12  180     Normal
+
+value label
+-984    A
+-14     B

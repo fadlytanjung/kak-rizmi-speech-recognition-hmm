@@ -44,6 +44,8 @@ def detail_label(id):
 @app.route("/predict", methods=["GET","POST"])
 def predict():
 
+    label = request.form.get('label')
+
     if 'audio' in request.files:
         filewav = request.files["audio"]
         
@@ -58,15 +60,28 @@ def predict():
 
     else:
         return jsonify({'code': 401, 'message': 'File can not be null'}), 401
-
-    detail = requests.get('http://localhost:8080/labels/' +
-            request.form.get('label'))
+    host = int(os.environ.get("PORT", 8080))
+    detail = requests.get(host+'/labels/' +label)
     if len(detail.json()['payload']) == 0:
         return jsonify({'code': 401, 'message': 'label not found'}), 401
+
+    CATEGORY = ['Q_3', 'D2_4', 'D1_1', 'D1_2', 'D1_4', 'D2_2', 'D2_3',
+                'D3_3', 'D4_3','Q_4', 'D3_2', 'Q_1', 'D4_1', 'D1_3', 
+                'D2_1', 'D4_4', 'D4_2', 'D3_1', 'Q_2', 'D3_4']
+    obj = HMM(CATEGORY=CATEGORY)
+    predict_data = obj.predict(label, 'input/tempData/data.wav')
+
+    if predict_data == label:
+        prediction = True
+    else:
+        prediction = False
+
     data = {
-        'label':request.form.get('label'),
+        'label_expected':label,
         'detail': detail.json()['payload'],
-        'status_prediction':False
+        'status_prediction':prediction,
+        'label_prediction':predict_data
+
     }
     return jsonify({'code': 200, 'payload': data }), 200
 
@@ -121,5 +136,5 @@ def train_model():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
-    # app.run(host="0.0.0.0", port=port, debug=True) #env for heroku
-    app.run(port=port, debug=True)
+    app.run(host="0.0.0.0", port=port) #env for heroku
+    # app.run(port=port, debug=True)

@@ -1,9 +1,11 @@
+import numpy as np
+import pandas as pd
+import os, random
 from python_speech_features import mfcc
 from scipy.io import wavfile
 from hmmlearn import hmm
 from sklearn.externals import joblib
-import numpy as np
-import os
+from KNN import KNN
 
 class HMM:
     """docstring for Model"""
@@ -92,7 +94,81 @@ class HMM:
        
         # result = model.predict(mfcc_feat)
         return label[result[0]]
+
+    def improvment_single_test(self, label, data=None):
+        Q_label = ['Q_1', 'Q_2', 'Q_3', 'Q_4']
+        D_label = ['D2_4', 'D1_1', 'D1_2', 'D1_4', 'D2_2', 'D2_3', 'D3_3', 'D4_3',
+                   'D3_2', 'D4_1', 'D1_3', 'D2_1', 'D4_4', 'D4_2', 'D3_1', 'D3_4']
+
+        if label.split('_')[0][0] == 'D':
+            compare_label = random.choice(Q_label)
+        else:
+            compare_label = random.choice(D_label)
+
+        score_data_label = []
+        score_compare_data_label = []
+        model = self.load('models/'+label+'.pkl')
+
+        if data != None:
+            mfcc_feat = self.compute_mfcc(data)
+        else:
+            mfcc_feat = self.compute_mfcc('input/tempData/data.wav')
+
+        score_data = model.score(mfcc_feat)
+
+        label_df = []
+        values_df = []
+        for filename in os.listdir('train/'+label):
+            mfcc_file = self.compute_mfcc('train/'+label+'/'+filename)
+            mfcc_feat_file = model.score(mfcc_file)
+            score_data_label.append(mfcc_feat_file)
+            values_df.append(mfcc_feat_file)
+            label_df.append(label)
+
+        for filename in os.listdir('train/'+compare_label):
+            mfcc_file = self.compute_mfcc('train/'+compare_label+'/'+filename)
+            mfcc_feat_file = model.score(mfcc_file)
+            score_compare_data_label.append(mfcc_feat_file)
+            values_df.append(mfcc_feat_file)
+            label_df.append(compare_label)
+
+        
+        print(label_df)
+        print(values_df)
+        data_df = {'values':values_df,'label':label_df}
+        df = pd.DataFrame(data=data_df)
+        
+
+        
+        # min_val = min(score_data_label)
+        # max_val = max(score_data_label)
+
+        # if round(score_data) in range(round(min_val),round(max_val)):
+        #     print(True)
+        # else:
+        #     print(False)
+        return df.to_csv('dataKNN/'+label+'.csv', index=False)
+    
+    def predict(self, label, data=None):
+
+        model = self.load('models/'+label+'.pkl')
+        if data != None:
+            mfcc_feat = self.compute_mfcc(data)
+        else:
+            mfcc_feat = self.compute_mfcc('input/tempData/data.wav')
+
+        score_data = model.score(mfcc_feat)
        
+        data_df = {0: [score_data]}
+        df = pd.DataFrame(data=data_df)
+        
+        obj = KNN('dataKNN/'+label+'.csv')
+        path = 'modelsKNN/'+label+'.pkl'
+        predict = obj.predict(path,df)
+
+        return predict[0]
+
+
 
     def test(self, wavdict=None, labeldict=None):
         result = []
@@ -154,14 +230,20 @@ class HMM:
 
 if __name__ == "__main__":
 
-    CATEGORY = ['idgham','iqlab']
+    # CATEGORY = ['idgham','iqlab']
+    CATEGORY = ['Q_3', 'D2_4', 'D1_1', 'D1_2', 'D1_4', 'D2_2', 'D2_3', 'D3_3', 'D4_3',
+                'Q_4', 'D3_2', 'Q_1', 'D4_1', 'D1_3', 'D2_1', 'D4_4', 'D4_2', 'D3_1', 'Q_2', 'D3_4']
     obj = HMM(CATEGORY=CATEGORY)
-    # wavdict, labeldict = obj.gen_wavlist('data/training')
+    wavdict, labeldict = obj.gen_wavlist('train')
+    # print(list(set(labeldict.values())))
     # testdict, testlabel = obj.gen_wavlist('data/testing')
 
     # obj.train(wavdict=wavdict, labeldict=labeldict)
     # obj.test(wavdict=testdict, labeldict=testlabel)
-    predict = obj.single_test(CATEGORY,'input/tempData/L4_D2_3.wav')
-    print(predict)
+    # predict = obj.single_test(CATEGORY,'input/tempData/L4_D2_3.wav')
+    # for i in CATEGORY:
+    #     predict = obj.improvment_single_test(i)
+    # print(predict)
+    predict_final = obj.predict('D1_1', 'input/tempData/data.wav')
 
 
