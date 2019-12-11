@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
-# from HMM import HMM
+from HMM import HMM
 import time,json,re,os, requests
 
 UPLOAD_FOLDER = 'input/tempData/'
@@ -70,6 +70,56 @@ def predict():
     }
     return jsonify({'code': 200, 'payload': data }), 200
 
+
+@app.route("/predict_model", methods=["GET", "POST"])
+def predict_model():
+
+    if 'audio' in request.files:
+        filewav = request.files["audio"]
+
+        if filewav and allowed_file(filewav.filename):
+            filename = secure_filename(filewav.filename)
+            # filewav.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filewav.save(os.path.join(
+                app.config['UPLOAD_FOLDER'], 'data.wav'))
+
+        else:
+            return jsonify({'code': 401, 'message': 'Invalid Format File'}), 401
+
+    else:
+        return jsonify({'code': 401, 'message': 'File can not be null'}), 401
+
+    CATEGORY = ['idgham', 'iqlab']
+    obj = HMM(CATEGORY=CATEGORY)
+    predict = obj.single_test(CATEGORY, 'input/tempData/data.wav')
+
+    return jsonify({'code': 200, 'payload': predict}), 200
+
+@app.route("/train_model", methods=["POST"])
+def train_model():
+    if request.json['app_name'] != 'tajwida':
+        return jsonify({'code': 401, 'message': 'Incorrect App name'}), 401
+    CATEGORY = ['idgham', 'iqlab']
+    obj = HMM(CATEGORY=CATEGORY)
+    wavdict, labeldict = obj.gen_wavlist('data/training')
+    testdict, testlabel = obj.gen_wavlist('data/testing')
+
+    obj.train(wavdict=wavdict, labeldict=labeldict)
+    result = obj.test(wavdict=testdict, labeldict=testlabel)
+    
+    x = 0
+    for key,val in result[1].items():
+        x+=int(val)
+    callback = {
+        'correct_total':x,
+        'detail_correct':result[1],
+        'incorrect_total':len(result[0]),
+        'detail_incorrect':result[0],
+        'accurate':result[2]
+    }
+    return jsonify({'code': 200, 'payload': callback}), 200
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    # app.run(host="0.0.0.0", port=port, debug=True) #env for heroku
+    app.run(port=port, debug=True)

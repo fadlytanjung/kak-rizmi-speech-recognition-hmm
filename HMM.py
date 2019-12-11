@@ -8,7 +8,7 @@ import os
 class HMM:
     """docstring for Model"""
 
-    def __init__(self, CATEGORY=None, n_comp=15, n_mix=3, cov_type='diag', n_iter=1000):
+    def __init__(self, CATEGORY=None, n_comp=3, n_mix=3, cov_type='diag', n_iter=1000):
         super(HMM, self).__init__()
         self.CATEGORY = CATEGORY
         self.category = len(CATEGORY)
@@ -34,7 +34,7 @@ class HMM:
                     filepath = os.sep.join([dirpath, filename])
                     fileid = filename.strip('.wav')
                     wavdict[fileid] = filepath
-                    label = dirpath.split('/')[1]
+                    label = dirpath.split('/')[len(dirpath.split('/'))-1]
                     labeldict[fileid] = label
                     lab.add(label)
         # self.CATEGORY = list(set(labeldict.values()))
@@ -73,84 +73,95 @@ class HMM:
         return joblib.load(path)
 
     def single_test(self, path_model, path_data):
-        model = self.load(path_model)
-        # print(model)
-        # for i in model:
-        #     print(i)
+        subre = []
+        label = []
+        for i in path_model:
 
-        # exit()
-        mfcc_feat = self.compute_mfcc(path_data)
-        # print(mfcc_feat)
-        # log = np.array(mfcc_feat)
-        # print(log)
-        # y_hat = np.argmax(log, axis=0)
-        # print(y_hat)
-        # exit()
-        re = model.score(mfcc_feat)
-        import math
-        logprob, seq = model.decode(mfcc_feat)
-        # print(math.exp(logprob),logprob)
-        # print(seq)
-        # print(re*-1/100000)
-        result = model.predict(mfcc_feat)
-        temp = {}
-        for i in result:
-            if i in temp:
-                temp[i]+=1
-            else:
-                temp[i] = 1
+            model = self.load('models/'+i+'.pkl')
         
-        # print(max(temp),max(temp.values()),temp)
-        # print(model.sample(n_samples=9))
-        # sampel = model.sample(n_samples=9)
-        # score_sampel = model.score_samples(sampel[0])[1]
-        
-        # for i in sampel:
-        #     print(i)    
-        
-        # for i in range(9):
-        #     print(model.score_samples(np.reshape(sampel,(9,1)),lengths=9))
-        
+            mfcc_feat = self.compute_mfcc(path_data)
+            score = model.score(mfcc_feat)
+            label.append(i)
+            subre.append(score)
+        result = np.vstack(subre).argmax(axis=0)
+        # print(result,subre,label)
+
+        # re = model.score(mfcc_feat)
+        # import math
+        # logprob, seq = model.decode(mfcc_feat)
+       
+        # result = model.predict(mfcc_feat)
+        return label[result[0]]
+       
 
     def test(self, wavdict=None, labeldict=None):
         result = []
         for k in range(self.category):
             subre = []
             label = []
-            model = self.models[k]
+            model = self.load('models/'+self.CATEGORY[k]+'.pkl')
+            alamat = {}
+            o = 0
             for x in wavdict:
+                # print(self.CATEGORY[k], labeldict[x])
                 mfcc_feat = self.compute_mfcc(wavdict[x])
+                alamat[o] = wavdict[x]
+                o += 1
                 re = model.score(mfcc_feat)
                 subre.append(re)
                 label.append(labeldict[x])
             result.append(subre)
-            
+       
         
         result = np.vstack(result).argmax(axis=0)
-        print(result)
         result = [self.CATEGORY[label] for label in result]
-        print('hasil：\n', result)
-        print('label：\n', label)
+        # print('hasil：\n', result)
+        # print('label：\n', label)
+
+        # totalnum = len(label)
+        # correctnum = 0
+        # for i in range(totalnum):
+        #     if result[i] == label[i]:
+        #         correctnum += 1
+        # print('akurasi :', correctnum/totalnum)
 
         totalnum = len(label)
         correctnum = 0
+        kelompok = {}
+        false = {}
+        for k in label:
+            kelompok[k] = 0
         for i in range(totalnum):
             if result[i] == label[i]:
                 correctnum += 1
-        print('akurasi :', correctnum/totalnum)
+                try:
+                    kelompok[label[i]] += 1
+                except NameError:
+                    kelompok[label[i]] = 0
+            else:
+                print(alamat[i] + ' =======> ' + result[i] +
+                      '(' + str(result[i] == label[i]) + ')')
+                false[alamat[i]] = result[i]
+                '(' + str(result[i] == label[i]) + ')'
+        detail = {}
+        for j in kelompok:
+            print(j + ': ' + str(kelompok[j]))
+            detail[j] = str(kelompok[j])
+        print('akurasi :' + str(correctnum) + '/' +
+              str(totalnum) + ':', correctnum/totalnum)
+
+        return [false, detail, correctnum/totalnum]
 
 if __name__ == "__main__":
 
-    CATEGORY = ['D1_4', 'D2_3', 'D3_2', 'D3_1', 'D4_4', 'D3_3',
-                'D2_2', 'D1_3', 'D2_4', 'D1_2', 'D4_1', 'D3_4',
-                'D2_1', 'D4_2', 'D1_1', 'D4_3']
+    CATEGORY = ['idgham','iqlab']
     obj = HMM(CATEGORY=CATEGORY)
-    wavdict, labeldict = obj.gen_wavlist('train')
-    testdict, testlabel = obj.gen_wavlist('test')
-   
-    obj.train(wavdict=wavdict, labeldict=labeldict)
-    obj.test(wavdict=testdict, labeldict=testlabel)
-    # exit()
-    # obj.single_test('models/D2_1.pkl','input/tempData/L1_D4_1.wav')
+    # wavdict, labeldict = obj.gen_wavlist('data/training')
+    # testdict, testlabel = obj.gen_wavlist('data/testing')
+
+    # obj.train(wavdict=wavdict, labeldict=labeldict)
+    # obj.test(wavdict=testdict, labeldict=testlabel)
+    predict = obj.single_test(CATEGORY,'input/tempData/L4_D2_3.wav')
+    print(predict)
 
 
