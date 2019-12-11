@@ -111,6 +111,34 @@
             "description": "(sinatun wala) 2.255",
             "type": "Idgham Bighunnah",
             "char": "و - Wa"
+        },
+        {
+            "id": 17,
+            "label": "Q_1",
+            "description": "(min ba`d) - 30.54",
+            "type": "Iqlab",
+            "char": "ب - Ba"
+        },
+        {
+            "id": 18,
+            "label": "Q_2",
+            "description": "(`abadan bima) - 2.95",
+            "type": "Iqlab",
+            "char": "ب - Ba"
+        },
+        {
+            "id": 19,
+            "label": "Q_3",
+            "description": "(yaumaidzin bashirah) - 75.24",
+            "type": "Iqlab",
+            "char": "ب - Ba"
+        },
+        {
+            "id": 20,
+            "label": "Q_4",
+            "description": "(`alimun bidzat) - 67.13",
+            "type": "Iqlab",
+            "char": "ب - Ba"
         }
     ]
 }

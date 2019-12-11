@@ -61,7 +61,7 @@ def predict():
     else:
         return jsonify({'code': 401, 'message': 'File can not be null'}), 401
     
-    detail = requests.get('https:tajwida.herokuapp.com/labels/' +label)
+    detail = requests.get('https://tajwida.herokuapp.com/labels/' +label)
     if len(detail.json()['payload']) == 0:
         return jsonify({'code': 401, 'message': 'label not found'}), 401
 
