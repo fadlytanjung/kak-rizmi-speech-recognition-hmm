@@ -1,5 +1,8 @@
 __pycache__
 WAV
+Procfile
+requirements.txt
+runtime.txt
 
 *.py[co]
 *.DS_*
